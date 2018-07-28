@@ -1,5 +1,5 @@
 class Grid{
-    constructor(name, mapH, mapW, cellH, cellW, color) {
+    constructor(name, mapW, mapH, cellW, cellH, color) {
         this.name = name;
         this.pos = createVector(0, 0);
         this.mapH = mapH; // hauteur de la map en px
@@ -8,9 +8,11 @@ class Grid{
         this.cellW = cellW; // largeur d'une cellule en px
         // calcul des dimensions de la grille en fonction de la map
         // on prévoit une deux cellules de plus sur chaque dimension pour assurer une cohérence graphique
-        this.h = Math.floor(this.mapH/this.cellH) + 2; // hauteur de la grille en cellule
-        this.w = Math.floor(this.mapW/this.cellW) + 2; // largeur de la grille en cellule
+        this.h = Math.floor(this.mapH/this.cellH); // hauteur de la grille en cellule
+        this.w = Math.floor(this.mapW/this.cellW); // largeur de la grille en cellule
         this.color = color;
+        console.log(this.h);
+        console.log(this.w);
     }
 
     draw(){
@@ -19,12 +21,12 @@ class Grid{
             stroke(this.color);
             strokeWeight(4);
             // on trace les lignes verticales
-            for (const i of Array(this.w).keys()){
-                line((i-1) * this.cellW + this.pos.x, 0 + this.pos.y, (i-1) * this.cellW + this.pos.x, this.h * this.cellH + this.pos.y);   
+            for (let i = 0; i < this.w; i++){
+                line(i * this.cellW + this.pos.x, 0 + this.pos.y, i * this.cellW + this.pos.x, this.h * this.cellH + this.pos.y);   
             }
             // on trace les lignes horizontales
-            for (const i of Array(this.h).keys()){
-                line(0 + this.pos.x, (i-1) * this.cellH + this.pos.y, this.w * this.cellW + this.pos.x, (i-1) * this.cellH + this.pos.y);   
+            for (let i = 0; i < this.h; i++){
+                line(0 + this.pos.x, i * this.cellH + this.pos.y, this.w * this.cellW + this.pos.x, i * this.cellH + this.pos.y);   
             }
         }
     }
