@@ -1,0 +1,41 @@
+
+- Distinction monstre vs allié
+- Déplacement avec conservation origine + ligne
+- Palette : (Créer objet  + visuel)
+    - Est une tile pour le background
+    - méthode draw
+    - liste des joueurs
+    - contient une liste de tiles
+        - spawners
+
+- Empecher sortie map des tiles
+
+- Sauvegarde du monde
+- Chargement du monde
+
+- Formulaire 
+    - Sélection équipe
+        - liste des joueurs
+        - instanciation de monstre
+        - instanciation de joueur
+    - POP-UP
+- Brouillard de guerre
+    - manuel
+        - peindre
+    - automatique
+        - gestion vision personnages
+- Métadonnées supplémentaires (affichées à la sélection sauf pv courant et CA)
+    - fixes
+        - Nom
+        - Race
+        - Vision
+    - peu variables
+        - CA (visuel)
+        - PV Max
+        - Perception passive 
+        - Initiative
+    - temps réel
+        - PV Courant (visuel différent joueur/monstre)
+        - Status (champ libre)
+- Infliger des dégats
+- Historique Changements
