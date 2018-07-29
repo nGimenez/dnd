@@ -27,7 +27,7 @@ function setup(){
     createCanvas(mapImg.width, mapImg.height);
     grid = new Grid("grid", mapImg.width, mapImg.height, dimCell.x, dimCell.y, color('green'));
     mapTile = new Tile("map",0, 0, mapImg.width, mapImg.height, 1, 1, color('green'), mapImg);
-    dragon = new Movable("dragon", 200, 200, dimCell, 2, 2, color('magenta'), dragonImg);
+    dragon = new Unit("dragon", 20, 15, "dragon", 200, 200, dimCell, 2, 2, color('magenta'), dragonImg);
     randomMonster = new Movable("randomMonster", 50, 50, dimCell, 1, 1, color('magenta'));
     palette.push(new Duplicable("monsterPalette", 500, 50, dimCell, 1, 1, color('red')));
     world.push(mapTile);
@@ -79,8 +79,6 @@ function mousePressed() {
     });
   }
   
-
-  
   if(isDragging) {
     pushOnTop(movingTile)
   }
@@ -96,14 +94,15 @@ function pushOnTop(movingTile) {
 function mouseDragged() {
   if(isDragging) {
     let m = createVector(mouseX, mouseY);
-    movingTile.pos.set(m).add(clickOffset);
+    movingTile.move(m.add(clickOffset));
   } 
 }
 
 function mouseReleased() {
-  let m = createVector(mouseX, mouseY);
   if (isDragging){
-    movingTile.pos.set(grid.pxToSnappedPos(movingTile.pos));
+    //movingTile.pos.set(grid.pxToSnappedPos(movingTile.pos));
+    //grid.snapToMap(movingTile);
+    movingTile.snapToGrid(grid);
   }
   isDragging = false;
 }

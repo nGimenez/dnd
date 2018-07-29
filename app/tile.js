@@ -14,18 +14,13 @@ class Tile {
     draw(){
         if (!this.img){
             // intérieur
-            this.color.setAlpha(128)
-            fill(this.color);
+            this.color.setAlpha(128);
+            fill(this.color);   
             //border
-            this.color.setAlpha(255)
+            this.color.setAlpha(255);
             stroke(this.color);
             strokeWeight(4);
             rect(this.pos.x, this.pos.y, this.h, this.w, 10);
-            // text dans le rectangle
-            textSize(24);
-            textAlign(CENTER, CENTER);
-            fill(color('white'));
-            text(this.bodyText, this.pos.x + this.w / 2, this.pos.y + this.h / 2);
         }else{
             image(this.img, this.pos.x, this.pos.y, this.h, this.w);
             noFill();
@@ -33,11 +28,24 @@ class Tile {
             strokeWeight(4);
             rect(this.pos.x, this.pos.y, this.h, this.w, 10);
         }
+         // text dans le rectangle
+         textSize(24);
+         textAlign(CENTER, CENTER);
+         fill(color('white'));
+         text(this.bodyText, this.pos.x + this.w / 2, this.pos.y + this.h / 2);
     }
 
     resizeItem(dim){
         this.w = dim.x * this.sizeX;
         this.h = dim.y * this.sizeY;
+    }
+
+    move(m){
+        this.pos.set(m);
+    }
+
+    snapToGrid(grid){
+        this.pos = grid.gridToPx(createVector(Math.round((this.pos.x - grid.pos.x)  / grid.cellW), Math.round((this.pos.y - grid.pos.y)/ grid.cellH)));
     }
 }
 

@@ -3,8 +3,6 @@
   Dragging images
 */
 class Movable extends GridItem {
-
-
     hits(hitpos) {
       if(hitpos.x > this.pos.x && 
          hitpos.x < this.pos.x + this.w && 

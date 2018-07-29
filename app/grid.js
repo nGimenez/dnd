@@ -31,15 +31,13 @@ class Grid{
         }
     }
 
-    // pxToGrid(pos){
-    //     return createVector(Math.floor(pos.x / this.w), Math.floor(pos.y / this.cellH));
-    // }
     gridToPx(pos){
         return createVector((pos.x * this.cellW) + this.pos.x , (pos.y * this.cellH) + this.pos.y);
     }
-    pxToSnappedPos(pos){
-        return this.gridToPx(createVector(Math.round((pos.x - this.pos.x)  / this.cellW), Math.round((pos.y - this.pos.y)/ this.cellH)));
+    snapToMap(tile){
+        tile.pos = this.gridToPx(createVector(Math.round((tile.pos.x - this.pos.x)  / this.cellW), Math.round((tile.pos.y - this.pos.y)/ this.cellH)));
     }
+    // redimensionnement de la grille et des gridItems
     resize(dim, items){
         this.cellW = dim.x;
         this.cellH = dim.y;
@@ -50,7 +48,7 @@ class Grid{
             // redimensionnement
             t.resizeItem(dimCell);
             // repositionnement sur la grille
-            t.pos = this.pxToSnappedPos(t.pos);
+            this.snapToMap(t)
         });
     }
 }
