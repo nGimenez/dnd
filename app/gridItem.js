@@ -6,7 +6,7 @@ class GridItem extends Tile {
         this.scale = scale;
     }
 
-    resizeItem(dim, grid){
+    resizeItem(dim){
         this.scale = dim;
         this.w = this.scale.x * this.sizeX;
         this.h = this.scale.x * this.sizeX;

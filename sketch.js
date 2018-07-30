@@ -10,9 +10,10 @@ var isDragging = false;
 var isCopying = false;
 var world = [];
 var palette = [];
-var movable = [];
+var movables = [];
 
 let dimCell;
+let worldDatabase;
 
 function preload() {
   // Chargement des images utilisées pour les tiles
@@ -22,6 +23,7 @@ function preload() {
 }
 
 function setup(){
+    initFireBase();
     initPanel();
     dimCell = createVector(50, 50);
     createCanvas(mapImg.width, mapImg.height);
@@ -49,6 +51,7 @@ function draw(){
 
 
 function mousePressed() {
+  worldDatabase.doc('00000001').update({"testChamp":"testNouvelleValeur"} );
   let m = createVector(mouseX, mouseY);
   
 
@@ -152,6 +155,47 @@ function manageKeyboardEvent(){
   }else if (keyIsDown(UP_ARROW)){
     moveGrid(createVector(0, -1));
   }
+}
+
+function initFireBase(){
+  // Initialize Firebase
+  var config = {
+    apiKey: "AAAAtCWaZ1A:APA91bGYbkl-W0o8RwZ6Mk0Dq_ChetOoeXO8UGaJEUIaDUfxYIIdNJQzQ0br7NWWf9XvnqnybrTXXdjSxIUOtBsILGlyeNioUUlGWLdmsyJp_pOi-aoxVPLcP2WjSeSBhbSsivKEt8S4iy5QVs6yj-jhHdymNiSt2A",
+    authDomain: "dnd-board-saves.firebaseapp.com",
+    databaseURL: "https://dnd-board-saves.firebaseio.com",
+    projectId: "dnd-board-saves",
+    storageBucket: "dnd-board-saves.appspot.com",
+    messagingSenderId: "773724989264"
+  };
+  firebase.initializeApp(config);
+
+  const db = firebase.firestore();
+  const settings = {/* your settings... */ timestampsInSnapshots: true};
+  db.settings(settings);
+  
+  worldDatabase = db.collection('world')
+  // Reference the document
+  myWorld = worldDatabase.doc('00000001');
+  
+  // Listen to realtime changes 
+  myWorld.onSnapshot(doc => {
+  
+    const data = doc.data();
+    console.log(data);
+  
+  })
+
+  
+
+
+  // console.log(firebase);
+  // let database = firebase.database();
+  // console.log(database);
+  // var ref = database.ref('save');
+  // var save = {
+  //   map: "assets/maps/manoir.jpg"
+  // }
+  // ref.push(save);
 }
 
 

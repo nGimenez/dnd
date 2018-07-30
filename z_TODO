@@ -1,6 +1,6 @@
 
 - Distinction monstre vs allié
-- Déplacement avec conservation origine + ligne
+- Déplacement avec conservation origine + ligne (avec calcul distance sans collision)
 - Palette : (Créer objet  + visuel)
     - Est une tile pour le background
     - méthode draw

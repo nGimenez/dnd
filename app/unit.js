@@ -29,4 +29,9 @@ class Unit extends Movable {
         this.tilePV.move(this.pos);
         this.tileCA.move((createVector((this.scale.x * this.sizeX) - 30, 0)).add(this.pos));
     }
+    resizeItem(dim){
+        super.resizeItem(dim);
+        // this.tilePV.resizeItem(dim);
+        // this.tileCA.resizeItem(dim);
+    }
 }
