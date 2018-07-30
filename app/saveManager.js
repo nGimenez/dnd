@@ -15,7 +15,7 @@ function saveTheWorld(currentWorld){
     
     // then we have to convert the objects to simple json objects
         // without all the functions and heavy stuff they contains
-        // with first level properties only
+        // with only properties and simple json objects
     // players
     let simpleJsonListOfPlayers = [];
     let simpleJsonPlayer = {};
@@ -28,4 +28,84 @@ function saveTheWorld(currentWorld){
     })
     // map
 
+}
+
+function saveMap(db, grid, mapTile){
+    var jsonMap = {
+        name: "manoir",
+        grid: {
+          name: grid.name,
+          offsetX: grid.pos.x,
+          offsetY: grid.pos.y,
+          widthPx: grid.mapW, // largeur de la map en px
+          heightPx: grid.mapH, // hauteur de la map en px
+          cellSize: grid.cellW, // largeur d'une cellule en px
+          width: grid.w, // largeur de la grille en cellules
+          height: grid.h, // hauteur de la grille en cellules
+        },
+        tile: {
+          name: mapTile.name,
+          offsetX: mapTile.pos.x,
+          offsetY: mapTile.pos.y,
+          widthPx: mapTile.w, // largeur de la map en px
+          heightPx: mapTile.h, // hauteur de la map en px
+          imgUrl: mapTile.img.url
+        },
+        fog: [
+             {location : new firebase.firestore.GeoPoint(0, 0)},
+             {location : new firebase.firestore.GeoPoint(1, 1)},
+             {location : new firebase.firestore.GeoPoint(2, 2)}
+            ]
+        
+    }
+    console.log("saving map...");
+
+    db.doc('world/00000001/grid/1').set(jsonMap.grid);
+    db.doc('world/00000001/map/1').set(jsonMap.tile);
+    //db.collection('world/00000001/fog').update(jsonMap.fog);
+    deleteCollection(db, 'world/00000001/fog', 100);
+    pushCollection(db, 'world/00000001/fog', jsonMap.fog);
+}
+
+
+
+function loadMap(db, mapName){
+    // firebase alternate document and collection when exploring the tree
+    // our save containing already 2 collections (list of players and list of Monsters)
+    // we will save our map in a third collection so that it's stay at the same level even though there is only one map
+    // let query = db.collection('world/00000001/map').where('name','==',mapName);
+ 
+    // // There we listen to realtime changes 
+    // query.onSnapshot(maps => {
+    //     console.log("retrieved documents from collection : ");
+    //     maps.forEach(map => {
+    //         const data = map.data();
+    //         console.log(data);
+    //     });
+    // })
+
+
+    // There we listen to realtime changes on map
+    db.doc('world/00000001/map/1').onSnapshot(map => {
+        console.log("---------- MAP --------------");
+        const data = map.data();
+        console.log(data);   
+    });
+
+    // There we listen to realtime changes on grid
+    db.doc('world/00000001/grid/1').onSnapshot(grid => {
+        console.log("------------- GRID --------------");
+        const data = grid.data();
+        console.log(data);   
+    });
+
+    // There we listen to realtime changes on fog of war
+    db.collection('world/00000001/fog').get().then(points => {
+        points.forEach(point => {
+            console.log("------------- POINTS --------------");
+            const data = point.data();
+            console.log(data);   
+        })
+    });
+    
 }

@@ -15,22 +15,30 @@ var movables = [];
 let dimCell;
 let worldDatabase;
 
+let database;
+
+// Dans preload on balance tous les chargements asynchrones pour pouvoir les accéder dans la méthode setup
 function preload() {
   // Chargement des images utilisées pour les tiles
   dragonImg = loadImage('assets/monsters/dragon.png');
-  mapImg = loadImage('assets/maps/manoir.jpg');
+  const mapUrl = 'assets/maps/manoir.jpg';
+  mapImg = loadImage(mapUrl);
+  mapImg.url = mapUrl;
   team = loadJSON('model/teams.json');
-  
+  initFireBase();
 }
 
 function setup(){
     console.log(team.name);
-    initFireBase();
     initPanel();
+    loadMap(database, "manoir");
     dimCell = createVector(50, 50);
     createCanvas(mapImg.width, mapImg.height);
-    grid = new Grid("grid", mapImg.width, mapImg.height, dimCell.x, dimCell.y, color('green'));
-    mapTile = new Tile("map",0, 0, mapImg.width, mapImg.height, 1, 1, color('green'), mapImg);
+    grid = new Grid("manoir grid", mapImg.width, mapImg.height, dimCell.x, dimCell.y, color('green'));
+    mapTile = new Tile("manoir map",0, 0, mapImg.width, mapImg.height, 1, 1, color('green'), mapImg);
+    
+    
+
     dragon = new Unit("dragon", 20, 15, "dragon", 200, 200, dimCell, 2, 2, color('magenta'), dragonImg);
     randomMonster = new Movable("randomMonster", 50, 50, dimCell, 1, 1, color('magenta'));
     palette.push(new Duplicable("monsterPalette", 500, 50, dimCell, 1, 1, color('red')));
@@ -53,10 +61,10 @@ function draw(){
 
 
 function mousePressed() {
-  worldDatabase.doc('00000001').update({"testChamp":"testNouvelleValeur"} );
-  worldDatabase.doc('00000001').collection('textCollection');
-  worldDatabase.doc('00000001').collection('newCollection');
-  moveFbRecord(worldDatabase.doc('00000001').collection('textCollection'), worldDatabase.doc('00000001').collection('newCollection'));
+  saveMap(database, grid, mapTile);
+
+
+  // moveFbRecord(worldDatabase.doc('00000001').collection('textCollection'), worldDatabase.doc('00000001').collection('newCollection'));
   let m = createVector(mouseX, mouseY);
   
 
@@ -174,21 +182,9 @@ function initFireBase(){
   };
   firebase.initializeApp(config);
 
-  const db = firebase.firestore();
+  database = firebase.firestore();
   const settings = {/* your settings... */ timestampsInSnapshots: true};
-  db.settings(settings);
-  
-  worldDatabase = db.collection('world')
-  // Reference the document
-  myWorld = worldDatabase.doc('00000001');
-  
-  // Listen to realtime changes 
-  myWorld.onSnapshot(doc => {
-  
-    const data = doc.data();
-    console.log(data);
-  
-  })
+  database.settings(settings);
 }
 
 
