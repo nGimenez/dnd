@@ -1,16 +1,13 @@
-[
-    {
-        "name":"Team1",
-        "playerList":[
-            {
-                "irlname":"Léo",
-                "name":"Uthal",
-                "niveau":"",
-                "pvMax":"20",
-                "pvCourant":"16"
-            }
+{
+    "name":"Team1",
+    "playerList":[
+        {
+            "irlname":"Léo",
+            "name":"Uthal",
+            "niveau":"",
+            "pvMax":"20",
+            "pvCourant":"16"
+        }
 
-        ]
-    }
-
-]
+    ]
+}

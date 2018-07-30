@@ -19,10 +19,12 @@ function preload() {
   // Chargement des images utilisées pour les tiles
   dragonImg = loadImage('assets/monsters/dragon.png');
   mapImg = loadImage('assets/maps/manoir.jpg');
+  team = loadJSON('model/teams.json');
   
 }
 
 function setup(){
+    console.log(team.name);
     initFireBase();
     initPanel();
     dimCell = createVector(50, 50);
@@ -52,6 +54,9 @@ function draw(){
 
 function mousePressed() {
   worldDatabase.doc('00000001').update({"testChamp":"testNouvelleValeur"} );
+  worldDatabase.doc('00000001').collection('textCollection');
+  worldDatabase.doc('00000001').collection('newCollection');
+  moveFbRecord(worldDatabase.doc('00000001').collection('textCollection'), worldDatabase.doc('00000001').collection('newCollection'));
   let m = createVector(mouseX, mouseY);
   
 
@@ -184,18 +189,6 @@ function initFireBase(){
     console.log(data);
   
   })
-
-  
-
-
-  // console.log(firebase);
-  // let database = firebase.database();
-  // console.log(database);
-  // var ref = database.ref('save');
-  // var save = {
-  //   map: "assets/maps/manoir.jpg"
-  // }
-  // ref.push(save);
 }
 
 
