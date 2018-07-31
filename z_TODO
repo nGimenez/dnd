@@ -1,41 +1,32 @@
-- Formulaire 
-    - Sélection équipe
-        - liste des joueurs
-        - instanciation de monstre
-        - instanciation de joueur
+TODO
 
+[Contrôles]
+    - Selection d'une zone pour le brouillard avec gestion soustraction
+    - Selection d'une unité
 
-TODO : CLIENT
-- Distinction monstre vs allié
-- Déplacement avec conservation origine + ligne (avec calcul distance sans collision)
-- Objet : Palette 
-    - Est une tile pour le background
-    - méthode draw
-    - liste des joueurs
-    - contient une liste de tiles
-        - spawners
-- Brouillard de guerre
-    - manuel
-        - selection
-TODO : ENGINE
-- Sauvegarde du monde
-    - Sauvegarde
-- Chargement du monde
+[Vue Joueur]
+    - Un seul MODE (jeu)
+    - Chargement full from DB
+    - Affichage monstre sous brouillard / pas d'interaction
+    - Affichage joueurs sur brouillard / interaction
+        - déplacement possible
+    - Selection monstre
+        - Affiche métadonnées réduites (nom / race / état de santé)
+    - Selection joueur
+        - Affiche métadonnées complètes
+    - Pas de contrôle de grille
 
-
-
-- Métadonnées supplémentaires (affichées à la sélection sauf pv courant et CA)
-    - fixes
-        - Nom
-        - Race
-        - Vision
-    - peu variables
-        - CA (visuel)
-        - PV Max
-        - Perception passive 
-        - Initiative
-    - temps réel
-        - PV Courant (visuel différent joueur/monstre)
-        - Status (champ libre)
-- Infliger des dégats
-- Historique Changements
+[Vue MJ]
+    - Distinction des modes :
+        - Edition grille / brouillard
+        - Mode jeu
+        
+    - Sélection Spawner
+        - Edition métadonnées du monstre généré
+    - Sélection Joueur
+        -> Affiche métadonnées complètes
+    - Sélection Monstre
+        -> Affiche métadonnées complètes
+        -> Edition métadonnées possible
+        -> Sauvegarde monstre
+    - Palette
