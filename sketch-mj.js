@@ -89,8 +89,6 @@ function keyPressed(){
   // 0 sur pavé numérique affiche le world
   if (keyCode === 96){
     console.log(fog);
-    console.log("filtered");
-    console.log(fog.filter(removeDoublons));
   }else if(keyCode === 97){ // 1 pavé numérique
     grid.visible = !grid.visible;
   }else if(keyCode === 98){ // 2 pavé numérique

@@ -68,7 +68,7 @@ function saveFog(db, fog){
         })
     }).then(new function(){
         Promise.all(promises).then(function(){
-            pushCollection(db, 'world/00000001/fog', fog.filter(removeDoublons));
+            pushCollection(db, 'world/00000001/fog', fog);
         });
     });
 }
@@ -77,7 +77,8 @@ function saveFogBatch(db, fog){
     var arrayToDelete = [];
     var promises = []
     // There we listen to realtime changes on fog of war
-    transactionnalPushCollection(db, 'world/00000001/fog', fog.filter(removeDoublons));
+    clearCollectionBatch(db, 'world/00000001/fog', fog);
+    pushCollectionBatch(db, 'world/00000001/fog', fog);
 }
 
 function removeDoublons(value, index, self){

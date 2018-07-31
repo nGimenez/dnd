@@ -33,35 +33,52 @@ function pushCollection(db, collectionPath, array){
     });
 }
 
-function transactionnalDeleteCollection(db, collectionPath){
+function clearCollectionBatch(db, collectionPath, fog){
+    
+    console.log(fog);
+    var collection = db.collection(collectionPath);
     // Create a reference to the SF doc.
-    var colRef = db.collection(collectionPath);
-
-    return db.runTransaction(function(transaction) {
-        // This code may get re-run multiple times if there are conflicts.
-        return transaction.get(colRef).then(function(docList) {
-            docList.docs.forEach( doc => {
-                // colRef was a doc
-                transaction.delete(doc.id);
-            });
+    var colRef = collection.get().then((snapshot) => {
+        var batch = db.batch();
+        snapshot.docs.forEach((docRef) => {
+            doc = docRef.data();
+            // console.log(doc);
+            // console.log(docRef);
+            // console.log("point " + doc.x + "," + doc.y );
+            // si l'élément présent en base n'existe plus on le supprime
+            if (fog.findIndex((e) => compareValues(e, doc)) < 0){
+                
+                console.log("point " + doc.x + "," + doc.y + " in database only : deleting...");
+                batch.delete(collection.doc(doc.id));
+            }
         });
-    }).then(function() {
-        console.log("Transaction successfully committed!");
-    }).catch(function(error) {
-        console.log("Transaction failed: ", error);
+        return batch.commit().then(function () {
+            console.log("Suppression fog effectuée");
+        })
     });
 }
 
-function transactionnalPushCollection(db, collectionPath, array){
+function compareValues(element, doc){
+    console.log(element);
+    return doc.x === element.x && doc.y === element.y;
+  }
+function compareId(eid, docid){
+    console.log(eid + " vs " + docid);
+    return eid === docid;
+}
+
+function pushCollectionBatch(db, collectionPath, array){
     // Get a new write batch
     var batch = db.batch();
-
+    let collection = db.collection(collectionPath);
+    let ref;
     array.forEach( element => {
         if (element.id){
-            batch.update(element.id, element);
+            batch.update(collection.doc(element.id), element);
         }else{
-            element.id = db.collection(collectionPath).doc();
-            batch.set(element.id, element);
+            ref = collection.doc();
+            element.id = ref.id;
+            batch.set(ref, element);
         }
     });
 
