@@ -30,3 +30,46 @@ TODO
         -> Edition métadonnées possible
         -> Sauvegarde monstre
     - Palette
+
+
+REFACTOR MASSIF :
+-> Pattern object delegate Vers séparation Model / Controllers
+    - world model full json
+    - Controllers/Manager découpés par couches techniques
+        - Renderer
+            input : 
+                - loaded images
+                - model
+                - state
+            do : 
+                - render everything
+        - DatabaseManager
+            input :
+                - database 
+                - model
+            do : 
+                - load / update data
+        - EventManager
+            input :
+                - state
+                - model
+                - DatabaseManager
+            do :
+                - Trigger actions on Events depending of state
+                    - actions can be anything (model / change / save)
+        - ModelManager
+            input :
+                - model
+            do :
+                - Abstract model changes
+
+        - DOMManager
+            input :
+                - state (contains selected element)
+                - DatabaseManager
+            do :
+                - manage DOM éléments
+                    - load
+                    - bind DOM events
+                - display metadatas
+                - allow initialization of map
