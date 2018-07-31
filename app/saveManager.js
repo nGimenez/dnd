@@ -62,9 +62,27 @@ function saveMap(db, grid, mapTile){
 
     db.doc('world/00000001/grid/1').set(jsonMap.grid);
     db.doc('world/00000001/map/1').set(jsonMap.tile);
-    //db.collection('world/00000001/fog').update(jsonMap.fog);
-    deleteCollection(db, 'world/00000001/fog', 100);
-    pushCollection(db, 'world/00000001/fog', jsonMap.fog);
+
+
+    // deleteCollection(db, 'world/00000001/fog', 100, function(){
+    //     console.log("suppression terminée");
+    //     pushCollection(db, 'world/00000001/fog', jsonMap.fog);
+    // });
+    
+    var arrayToDelete = [];
+    var promises = []
+    // There we listen to realtime changes on fog of war
+    db.collection('world/00000001/fog').get().then(snapshot => {
+        snapshot.docs.forEach(point => {
+            console.log(point.data());
+            promises.push(db.collection('world/00000001/fog').doc(point.id).delete());
+        })
+    }).then(new function(){
+        Promise.all(promises).then(function(){
+            pushCollection(db, 'world/00000001/fog', jsonMap.fog);
+        });
+        
+    });
 }
 
 
@@ -87,24 +105,21 @@ function loadMap(db, mapName){
 
     // There we listen to realtime changes on map
     db.doc('world/00000001/map/1').onSnapshot(map => {
-        console.log("---------- MAP --------------");
+        console.log("---------- MAP updated --------------");
         const data = map.data();
-        console.log(data);   
     });
 
     // There we listen to realtime changes on grid
     db.doc('world/00000001/grid/1').onSnapshot(grid => {
-        console.log("------------- GRID --------------");
+        console.log("------------- GRID updated --------------");
         const data = grid.data();
-        console.log(data);   
     });
 
     // There we listen to realtime changes on fog of war
-    db.collection('world/00000001/fog').get().then(points => {
+    db.collection('world/00000001/fog').onSnapshot(points => {
+        console.log("------------- FOG updated --------------");
         points.forEach(point => {
-            console.log("------------- POINTS --------------");
             const data = point.data();
-            console.log(data);   
         })
     });
     

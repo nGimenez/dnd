@@ -8,54 +8,36 @@ function moveFbRecord(oldRef, newRef) {
 }
 
 
-function deleteCollection(db, collectionPath, batchSize) {
+function deleteCollection(db, collectionPath, batchSize, callback) {
     var collectionRef = db.collection(collectionPath);
     var query = collectionRef.orderBy('__name__').limit(batchSize);
 
-    return new Promise((resolve, reject) => {
-        deleteQueryBatch(db, query, batchSize, resolve, reject);
-    });
+    deleteQueryBatch(db, query, batchSize);
+    callback();
 }
   
-function deleteQueryBatch(db, query, batchSize, resolve, reject) {
+function deleteQueryBatch(db, query) {
     query.get()
-        .then((snapshot) => {
-          // When there are no documents left, we are done
-          if (snapshot.size == 0) {
-            return 0;
-          }
-  
-          // Delete documents in a batch
-          var batch = db.batch();
-          snapshot.docs.forEach((doc) => {
-            batch.delete(doc.ref);
-          });
-  
-          return batch.commit().then(() => {
-            return snapshot.size;
-          });
-        }).then((numDeleted) => {
-          if (numDeleted === 0) {
-            resolve();
-            return;
-          }
-  
-         deleteQueryBatch(db, query, batchSize, resolve, reject);
-          
+        .then((docs) => {
+            docs.forEach((doc) => {
+                console.log("test");
+                doc.delete();
+            });
         })
-        .catch(reject);
+        // deleteQueryBatch(db, query, batchSize, resolve, reject);
+          
 }
 
 function pushCollection(db, collectionPath, array){
-    // Get a new write batch
-    var batch = db.batch();
+    // // Get a new write batch
+    // var batch = db.batch();
 
     // ajout des éléments 1 à 1
     array.forEach( element => {
         db.collection(collectionPath).add(element);    
     });
     // Commit the batch
-    batch.commit().then(function () {
-        console.log("ajout terminé");
-    });
+    // batch.commit().then(function () {
+    //     console.log("ajout terminé");
+    // });
 }
