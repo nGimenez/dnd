@@ -1,29 +1,29 @@
-
-- Distinction monstre vs allié
-- Déplacement avec conservation origine + ligne (avec calcul distance sans collision)
-- Palette : (Créer objet  + visuel)
-    - Est une tile pour le background
-    - méthode draw
-    - liste des joueurs
-    - contient une liste de tiles
-        - spawners
-
-- Empecher sortie map des tiles
-
-- Sauvegarde du monde
-- Chargement du monde
-
 - Formulaire 
     - Sélection équipe
         - liste des joueurs
         - instanciation de monstre
         - instanciation de joueur
-    - POP-UP
+
+
+TODO : CLIENT
+- Distinction monstre vs allié
+- Déplacement avec conservation origine + ligne (avec calcul distance sans collision)
+- Objet : Palette 
+    - Est une tile pour le background
+    - méthode draw
+    - liste des joueurs
+    - contient une liste de tiles
+        - spawners
 - Brouillard de guerre
     - manuel
-        - peindre
-    - automatique
-        - gestion vision personnages
+        - selection
+TODO : ENGINE
+- Sauvegarde du monde
+    - Sauvegarde
+- Chargement du monde
+
+
+
 - Métadonnées supplémentaires (affichées à la sélection sauf pv courant et CA)
     - fixes
         - Nom

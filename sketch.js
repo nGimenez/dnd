@@ -34,15 +34,12 @@ function setup(){
     initPanel();
     //loadMap(database, "manoir");
     loadFog(database, fog);
-
-
     dimCell = createVector(50, 50);
     createCanvas(mapImg.width, mapImg.height);
     grid = new Grid("manoir grid", mapImg.width, mapImg.height, dimCell.x, dimCell.y, color('green'));
+    loadGrid(database, grid);
+    
     mapTile = new Tile("manoir map",0, 0, mapImg.width, mapImg.height, 1, 1, color('green'), mapImg);
-    
-    
-
     dragon = new Unit("dragon", 20, 15, "dragon", 200, 200, dimCell, 2, 2, color('magenta'), dragonImg);
     randomMonster = new Movable("randomMonster", 50, 50, dimCell, 1, 1, color('magenta'));
     palette.push(new Duplicable("monsterPalette", 500, 50, dimCell, 1, 1, color('red')));

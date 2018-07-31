@@ -54,8 +54,8 @@ function saveGrid(db, grid){
         width: grid.w, // largeur de la grille en cellules
         height: grid.h, // hauteur de la grille en cellules
     }
-    console.log("saving map...");
-    db.doc('world/00000001/grid/1').set(jsonGrid);
+    console.log("saving grid...");
+    db.doc('world/00000001/grid/1').update(jsonGrid);
 }
 
 function saveFog(db, fog){
@@ -90,20 +90,6 @@ function compareValues(element, value){
 
 
 function loadMap(db){
-    // firebase alternate document and collection when exploring the tree
-    // our save containing already 2 collections (list of players and list of Monsters)
-    // we will save our map in a third collection so that it's stay at the same level even though there is only one map
-    // let query = db.collection('world/00000001/map').where('name','==',mapName);
- 
-    // // There we listen to realtime changes 
-    // query.onSnapshot(maps => {
-    //     console.log("retrieved documents from collection : ");
-    //     maps.forEach(map => {
-    //         const data = map.data();
-    //         console.log(data);
-    //     });
-    // })
-
 
     // There we listen to realtime changes on map
     db.doc('world/00000001/map/1').onSnapshot(map => {
@@ -134,5 +120,14 @@ function loadFog(db, fog){
             const data = point.data();
             fog.push({id:point.id, x:data.x, y:data.y});
         })
+    });
+}
+
+function loadGrid(db, grid){
+    // There we listen to realtime changes on fog of war
+    db.doc('world/00000001/grid/1').onSnapshot(dbGrid => {
+        console.log("loadGrid");
+        console.log(dbGrid.data());
+        grid.update(dbGrid.data());
     });
 }

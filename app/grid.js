@@ -55,5 +55,18 @@ class Grid{
             this.snapToMap(t)
         });
     }
+    
+    update(jsonGrid){
+        this.name = jsonGrid.name;
+        this.pos = createVector(jsonGrid.offsetX, jsonGrid.offsetY);
+        this.mapH = jsonGrid.heightPx; // hauteur de la map en px
+        this.mapW = jsonGrid.widthPx; // largeur de la map en px
+        this.cellH = jsonGrid.cellSize; // hauteur d'une cellule en px
+        this.cellW = jsonGrid.cellSize; // largeur d'une cellule en px
+        // calcul des dimensions de la grille en fonction de la map
+        // on prévoit une deux cellules de plus sur chaque dimension pour assurer une cohérence graphique
+        this.h = jsonGrid.height; // hauteur de la grille en cellule
+        this.w = jsonGrid.width; // largeur de la grille en cellule
+    }
 }
 
