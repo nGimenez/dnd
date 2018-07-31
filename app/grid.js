@@ -31,6 +31,10 @@ class Grid{
         }
     }
 
+    pxToGrid(pos){
+        return createVector(Math.floor((pos.x - this.pos.x)  / this.cellW), Math.floor((pos.y - this.pos.y)/ this.cellH));
+    }
+
     gridToPx(pos){
         return createVector((pos.x * this.cellW) + this.pos.x , (pos.y * this.cellH) + this.pos.y);
     }

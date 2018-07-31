@@ -23,21 +23,51 @@ function deleteQueryBatch(db, query) {
                 console.log("test");
                 doc.delete();
             });
-        })
-        // deleteQueryBatch(db, query, batchSize, resolve, reject);
-          
+        })          
 }
 
 function pushCollection(db, collectionPath, array){
-    // // Get a new write batch
-    // var batch = db.batch();
-
     // ajout des éléments 1 à 1
     array.forEach( element => {
         db.collection(collectionPath).add(element);    
     });
+}
+
+function transactionnalDeleteCollection(db, collectionPath){
+    // Create a reference to the SF doc.
+    var colRef = db.collection(collectionPath);
+
+    return db.runTransaction(function(transaction) {
+        // This code may get re-run multiple times if there are conflicts.
+        return transaction.get(colRef).then(function(docList) {
+            docList.docs.forEach( doc => {
+                // colRef was a doc
+                transaction.delete(doc.id);
+            });
+        });
+    }).then(function() {
+        console.log("Transaction successfully committed!");
+    }).catch(function(error) {
+        console.log("Transaction failed: ", error);
+    });
+}
+
+function transactionnalPushCollection(db, collectionPath, array){
+    // Get a new write batch
+    var batch = db.batch();
+
+    array.forEach( element => {
+        if (element.id){
+            batch.update(element.id, element);
+        }else{
+            element.id = db.collection(collectionPath).doc();
+            batch.set(element.id, element);
+        }
+    });
+
     // Commit the batch
-    // batch.commit().then(function () {
-    //     console.log("ajout terminé");
-    // });
+    batch.commit().then(function () {
+        console.log("Ajout fog effectuée");
+    });
+    // Create a reference to the SF doc.
 }

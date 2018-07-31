@@ -1,16 +1,20 @@
-var dragonImg;
+// Similaire player mais avec des fonctionalités spécifiques
+// - Edition du brouillard de guerre
+// - Sauvegarde du brouillard de guerre
+
+
+// - Changement du statut du monstre 
+//    - peut être fait par les joueurs
+//    - Si par le mj via gestion des PVs directement
+
+
 var mapImg;
 
 var grid;
 var mapTile;
-var dragon;
-var randomMonster;
 
 var isDragging = false;
-var isCopying = false;
 var world = [];
-var palette = [];
-var movables = [];
 
 let dimCell;
 let worldDatabase;
@@ -20,38 +24,21 @@ let fog = [];
 
 // Dans preload on balance tous les chargements asynchrones pour pouvoir les accéder dans la méthode setup
 function preload() {
-  // Chargement des images utilisées pour les tiles
-  dragonImg = loadImage('assets/monsters/dragon.png');
   const mapUrl = 'assets/maps/manoir.jpg';
   mapImg = loadImage(mapUrl);
   mapImg.url = mapUrl;
-  team = loadJSON('model/teams.json');
   initFireBase();
 }
 
 function setup(){
-    console.log(team.name);
-    initPanel();
-    //loadMap(database, "manoir");
-    loadFog(database, fog);
-
-
+    // loadMap(database, "manoir");
     dimCell = createVector(50, 50);
     createCanvas(mapImg.width, mapImg.height);
     grid = new Grid("manoir grid", mapImg.width, mapImg.height, dimCell.x, dimCell.y, color('green'));
     mapTile = new Tile("manoir map",0, 0, mapImg.width, mapImg.height, 1, 1, color('green'), mapImg);
-    
-    
-
-    dragon = new Unit("dragon", 20, 15, "dragon", 200, 200, dimCell, 2, 2, color('magenta'), dragonImg);
-    randomMonster = new Movable("randomMonster", 50, 50, dimCell, 1, 1, color('magenta'));
-    palette.push(new Duplicable("monsterPalette", 500, 50, dimCell, 1, 1, color('red')));
     world.push(mapTile);
     world.push(grid);
-    world.push(dragon);
-    world.push(randomMonster);
-    
-    movables = world.filter(t => t instanceof Movable);
+    loadMap(database);
 }
 
 var mouseHistory = [];
@@ -59,58 +46,23 @@ var mouseHistory = [];
 function draw(){
     clear();
     world.forEach(t => t.draw());
-    palette.forEach(t => t.draw());
     drawFog(fog, grid, mapTile);
     manageKeyboardEvent();
 }
 
 
 function mousePressed() {
-  // saveMap(database, mapTile);
-
-
+  //saveFog(database, fog);
   // moveFbRecord(worldDatabase.doc('00000001').collection('textCollection'), worldDatabase.doc('00000001').collection('newCollection'));
-  let m = createVector(mouseX, mouseY);
+  const mousePos = createVector(mouseX, mouseY);
+  const cellClickedPos = grid.pxToGrid(mousePos)
+  // convert mouse to cell position
+  console.log(cellClickedPos);
+  fog.push({x: cellClickedPos.x, y: cellClickedPos.y});
+  fog = fog.filter(removeDoublons);
   
-
-  palette.forEach((r) => {
-    if(r.hits(m)) {
-      clickOffset = p5.Vector.sub(r.tile.pos, m);
-      isDragging = true;
-      console.log("copying : " + r.tile.name);
-      spawner = r;
-      isCopying = true;
-    }
-  });
-
-  if (isCopying){
-    spawner.cpt++;
-    copy = spawner.spawn();
-    world.push(copy);
-    movingTile = copy;
-    isCopying = false;
-  }else{
-    movables.forEach((r) => {
-      if(r.hits(m)) {
-        clickOffset = p5.Vector.sub(r.pos, m);
-        isDragging = true;
-        movingTile = r;
-        console.log("dragging : " + r.name);
-      }
-    });
-  }
-  
-  if(isDragging) {
-    pushOnTop(movingTile)
-  }
 }
 
-function pushOnTop(movingTile) {
-  // on met l'élement dragged à la fin du world pour qu'il soit drawn en dernier
-  world = world.filter(t => t.name !== movingTile.name);
-  world.push(movingTile);
-  movables = world.filter(t => t instanceof Movable);
-}
 
 function mouseDragged() {
   if(isDragging) {
@@ -136,12 +88,19 @@ function keyPressed(){
   console.log(keyCode);
   // 0 sur pavé numérique affiche le world
   if (keyCode === 96){
-    console.log("world : ");
-    console.log("----------------");
-    world.forEach(t => console.log(t.name))
-    console.log("----------------");
+    console.log(fog);
+    console.log("filtered");
+    console.log(fog.filter(removeDoublons));
   }else if(keyCode === 97){ // 1 pavé numérique
     grid.visible = !grid.visible;
+  }else if(keyCode === 98){ // 2 pavé numérique
+    saveFogBatch(database, fog);
+  }else if(keyCode === 99){ // 3 pavé numérique
+    saveGrid(database, grid);
+  }else if(keyCode === 100){ // 4 pavé numérique
+    saveMap(database, mapTile);
+  }else if(keyCode === 101){ // 5 pavé numérique
+    drawFog(fog, grid, mapTile);
   }
 }
 

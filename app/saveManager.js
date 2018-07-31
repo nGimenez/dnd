@@ -30,64 +30,65 @@ function saveTheWorld(currentWorld){
 
 }
 
-function saveMap(db, grid, mapTile){
-    var jsonMap = {
-        name: "manoir",
-        grid: {
-          name: grid.name,
-          offsetX: grid.pos.x,
-          offsetY: grid.pos.y,
-          widthPx: grid.mapW, // largeur de la map en px
-          heightPx: grid.mapH, // hauteur de la map en px
-          cellSize: grid.cellW, // largeur d'une cellule en px
-          width: grid.w, // largeur de la grille en cellules
-          height: grid.h, // hauteur de la grille en cellules
-        },
-        tile: {
-          name: mapTile.name,
-          offsetX: mapTile.pos.x,
-          offsetY: mapTile.pos.y,
-          widthPx: mapTile.w, // largeur de la map en px
-          heightPx: mapTile.h, // hauteur de la map en px
-          imgUrl: mapTile.img.url
-        },
-        fog: [
-             {location : new firebase.firestore.GeoPoint(0, 0)},
-             {location : new firebase.firestore.GeoPoint(1, 1)},
-             {location : new firebase.firestore.GeoPoint(2, 2)}
-            ]
-        
+function saveMap(db, mapTile){
+    var jsonMapTile = {
+        name: mapTile.name,
+        offsetX: mapTile.pos.x,
+        offsetY: mapTile.pos.y,
+        widthPx: mapTile.w, // largeur de la map en px
+        heightPx: mapTile.h, // hauteur de la map en px
+        imgUrl: mapTile.img.url
+    }
+    console.log("saving map tile ...");
+    db.doc('world/00000001/map/1').set(jsonMapTile);
+}
+
+function saveGrid(db, grid){
+    var jsonGrid = {
+        name: grid.name,
+        offsetX: grid.pos.x,
+        offsetY: grid.pos.y,
+        widthPx: grid.mapW, // largeur de la map en px
+        heightPx: grid.mapH, // hauteur de la map en px
+        cellSize: grid.cellW, // largeur d'une cellule en px
+        width: grid.w, // largeur de la grille en cellules
+        height: grid.h, // hauteur de la grille en cellules
     }
     console.log("saving map...");
+    db.doc('world/00000001/grid/1').set(jsonGrid);
+}
 
-    db.doc('world/00000001/grid/1').set(jsonMap.grid);
-    db.doc('world/00000001/map/1').set(jsonMap.tile);
-
-
-    // deleteCollection(db, 'world/00000001/fog', 100, function(){
-    //     console.log("suppression terminée");
-    //     pushCollection(db, 'world/00000001/fog', jsonMap.fog);
-    // });
-    
+function saveFog(db, fog){
     var arrayToDelete = [];
     var promises = []
     // There we listen to realtime changes on fog of war
     db.collection('world/00000001/fog').get().then(snapshot => {
         snapshot.docs.forEach(point => {
-            console.log(point.data());
             promises.push(db.collection('world/00000001/fog').doc(point.id).delete());
         })
     }).then(new function(){
         Promise.all(promises).then(function(){
-            pushCollection(db, 'world/00000001/fog', jsonMap.fog);
+            pushCollection(db, 'world/00000001/fog', fog.filter(removeDoublons));
         });
-        
     });
 }
 
+function saveFogBatch(db, fog){
+    var arrayToDelete = [];
+    var promises = []
+    // There we listen to realtime changes on fog of war
+    transactionnalPushCollection(db, 'world/00000001/fog', fog.filter(removeDoublons));
+}
+
+function removeDoublons(value, index, self){
+    return self.findIndex(e => compareValues(e, value)) === index;
+}
+function compareValues(element, value){
+  return value.x === element.x && value.y === element.y;
+}
 
 
-function loadMap(db, mapName){
+function loadMap(db){
     // firebase alternate document and collection when exploring the tree
     // our save containing already 2 collections (list of players and list of Monsters)
     // we will save our map in a third collection so that it's stay at the same level even though there is only one map
@@ -117,10 +118,20 @@ function loadMap(db, mapName){
 
     // There we listen to realtime changes on fog of war
     db.collection('world/00000001/fog').onSnapshot(points => {
-        console.log("------------- FOG updated --------------");
         points.forEach(point => {
             const data = point.data();
         })
     });
     
+}
+
+function loadFog(db, fog){
+    // There we listen to realtime changes on fog of war
+    db.collection('world/00000001/fog').onSnapshot(points => {
+        fog.length = 0;
+        points.forEach(point => {
+            const data = point.data();
+            fog.push({id:point.id, x:data.x, y:data.y});
+        })
+    });
 }
